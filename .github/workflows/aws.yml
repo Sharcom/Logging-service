@@ -40,6 +40,5 @@ jobs:
         IMAGE_TAG: latest
       working-directory: ./Logging-service
       run: |
-        docker build -t $ECR_REPOSITORY:$IMAGE_TAG $DOCKERFILE_LOCATION
-        docker tag $ECR_REPOSITORY:latest $ECR_REGISTRY/$ECS_REPOSITORY
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $DOCKERFILE_LOCATION
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
