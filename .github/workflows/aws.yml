@@ -52,7 +52,7 @@ jobs:
         
       - name: AWS CLI Rollout
         run: |
-          aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ AWS_CLUSTER_NAME }}
+          aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.AWS_CLUSTER_NAME }}
           wget -O - https://raw.githubusercontent.com/Sharcom/Deployment/main/Production/rollout.sh | bash
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
