@@ -1,4 +1,4 @@
-name: Push Docker image to Amazon ECR
+name: Deploy service to AWS
 
 on:
   push:
@@ -13,11 +13,10 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
-    name: Deploy
+  Push_image:
+    name: Push image to ECR
     runs-on: ubuntu-latest
     environment: production
-
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -42,3 +41,20 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $DOCKERFILE_LOCATION
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+  Deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        id: install
+        
+      - name: AWS CLI Rollout
+        run: |
+          aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ AWS_CLUSTER_NAME }}
+          wget -O - https://raw.githubusercontent.com/Sharcom/Deployment/main/Production/rollout.sh | bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ sercrets.AWS_REGION }}
